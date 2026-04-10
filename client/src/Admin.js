@@ -7,13 +7,13 @@ export default function Admin({ queue }) {
   const [show, setShow] = useState(false);
   const [windows, setWindows] = useState([]);
 
-  // 🔒 Remember login
+  const [inputWindow, setInputWindow] = useState("");
+
   useEffect(() => {
     const saved = localStorage.getItem("adminAuth");
     if (saved === "true") setAuthorized(true);
   }, []);
 
-  // 📡 Listen for window updates
   useEffect(() => {
     socket.on("windowsUpdate", (data) => {
       setWindows(data);
@@ -44,20 +44,24 @@ export default function Admin({ queue }) {
     socket.emit("resetQueue");
   };
 
+  // ➕ ADD WINDOW (INPUT BASED)
   const addWindow = () => {
-    socket.emit("addWindow");
+    const num = Number(inputWindow);
+    if (!num) return alert("Enter valid number");
+
+    socket.emit("addWindow", num);
+    setInputWindow("");
   };
 
-  const removeWindow = (w) => {
-    socket.emit("removeWindow", w);
+  // ➖ REMOVE WINDOW (INPUT BASED)
+  const removeWindow = () => {
+    const num = Number(inputWindow);
+    if (!num) return alert("Enter valid number");
+
+    socket.emit("removeWindow", num);
+    setInputWindow("");
   };
 
-  // ⌨ ENTER KEY
-  const handleKey = (e) => {
-    if (e.key === "Enter") handleLogin();
-  };
-
-  // 🔐 LOGIN UI
   if (!authorized) {
     return (
       <div className="page">
@@ -69,8 +73,6 @@ export default function Admin({ queue }) {
             placeholder="Enter password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={handleKey}
-            className="input"
           />
 
           <button
@@ -88,7 +90,6 @@ export default function Admin({ queue }) {
     );
   }
 
-  // ✅ ADMIN PANEL
   return (
     <div className="page">
       <div className="card">
@@ -100,28 +101,33 @@ export default function Admin({ queue }) {
         {/* WINDOWS */}
         <div className="admin-grid">
           {windows.map((w) => (
-            <div key={w} style={{ display: "flex", gap: "6px" }}>
-              <button
-                className="btn primary"
-                onClick={() => next(w)}
-              >
-                Window {w}
-              </button>
-
-              <button
-                className="btn secondary"
-                onClick={() => removeWindow(w)}
-              >
-                ❌
-              </button>
-            </div>
+            <button
+              key={w}
+              className="btn primary"
+              onClick={() => next(w)}
+            >
+              Window {w}
+            </button>
           ))}
         </div>
 
-        {/* CONTROLS */}
-        <button className="btn primary" onClick={addWindow}>
-          ➕ Add Window
-        </button>
+        {/* INPUT CONTROL */}
+        <div className="control-row">
+          <input
+            type="number"
+            placeholder="Window #"
+            value={inputWindow}
+            onChange={(e) => setInputWindow(e.target.value)}
+          />
+
+          <button className="btn primary" onClick={addWindow}>
+            ➕ Add
+          </button>
+
+          <button className="btn secondary" onClick={removeWindow}>
+            ➖ Remove
+          </button>
+        </div>
 
         <button className="btn secondary" onClick={reset}>
           🔄 Reset

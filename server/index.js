@@ -32,18 +32,17 @@ io.on("connection", (socket) => {
   socket.emit("windowsUpdate", windows);
 
   // ➕ ADD WINDOW
-  socket.on("addWindow", () => {
-    const next =
-      windows.length > 0 ? Math.max(...windows) + 1 : 1;
-
-    windows.push(next);
-
-    io.emit("windowsUpdate", windows);
+  socket.on("addWindow", (num) => {
+    if (!windows.includes(num)) {
+      windows.push(num);
+      windows.sort((a, b) => a - b);
+      io.emit("windowsUpdate", windows);
+    }
   });
 
   // ❌ REMOVE WINDOW
-  socket.on("removeWindow", (w) => {
-    windows = windows.filter((win) => win !== w);
+  socket.on("removeWindow", (num) => {
+    windows = windows.filter((w) => w !== num);
 
     io.emit("windowsUpdate", windows);
   });

@@ -6,20 +6,26 @@ export default function Admin({ queue }) {
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [windows, setWindows] = useState([]);
-
   const [inputWindow, setInputWindow] = useState("");
 
+  // 🔒 AUTH
   useEffect(() => {
     const saved = localStorage.getItem("adminAuth");
     if (saved === "true") setAuthorized(true);
   }, []);
 
+  // 🔄 WINDOW SYNC (FIXED)
   useEffect(() => {
-    socket.on("windowsUpdate", (data) => {
+    const handleWindows = (data) => {
       setWindows(data);
-    });
+    };
 
-    return () => socket.off("windowsUpdate");
+    socket.on("windowsUpdate", handleWindows);
+
+    // 🔥 REQUEST WINDOWS AFTER CONNECT
+    socket.emit("requestWindows");
+
+    return () => socket.off("windowsUpdate", handleWindows);
   }, []);
 
   const handleLogin = () => {
@@ -44,7 +50,6 @@ export default function Admin({ queue }) {
     socket.emit("resetQueue");
   };
 
-  // ➕ ADD WINDOW (INPUT BASED)
   const addWindow = () => {
     const num = Number(inputWindow);
     if (!num) return alert("Enter valid number");
@@ -53,7 +58,6 @@ export default function Admin({ queue }) {
     setInputWindow("");
   };
 
-  // ➖ REMOVE WINDOW (INPUT BASED)
   const removeWindow = () => {
     const num = Number(inputWindow);
     if (!num) return alert("Enter valid number");
@@ -73,6 +77,7 @@ export default function Admin({ queue }) {
             placeholder="Enter password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="input"
           />
 
           <button

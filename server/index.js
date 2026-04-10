@@ -12,18 +12,15 @@ const io = new Server(server, {
   cors: { origin: "*" },
 });
 
-// QUEUE STATE
+// STATE
 let currentNumber = null;
 let currentWindow = null;
-let lastIssuedNumber = 1;
-
-// WINDOWS STATE (REAL-TIME)
 let windows = [1, 2, 3];
 
 io.on("connection", (socket) => {
   console.log("User connected");
 
-  // SEND INITIAL DATA
+  // ✅ SEND INITIAL STATE
   socket.emit("queueUpdate", {
     number: currentNumber,
     window: currentWindow,
@@ -31,8 +28,15 @@ io.on("connection", (socket) => {
 
   socket.emit("windowsUpdate", windows);
 
-  // ➕ ADD WINDOW
+  // 🔁 REQUEST WINDOWS (FIX FOR REFRESH)
+  socket.on("requestWindows", () => {
+    socket.emit("windowsUpdate", windows);
+  });
+
+  // ➕ ADD WINDOW (CUSTOM NUMBER)
   socket.on("addWindow", (num) => {
+    if (!num) return;
+
     if (!windows.includes(num)) {
       windows.push(num);
       windows.sort((a, b) => a - b);
@@ -40,10 +44,9 @@ io.on("connection", (socket) => {
     }
   });
 
-  // ❌ REMOVE WINDOW
+  // ➖ REMOVE WINDOW
   socket.on("removeWindow", (num) => {
     windows = windows.filter((w) => w !== num);
-
     io.emit("windowsUpdate", windows);
   });
 

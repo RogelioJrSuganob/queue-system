@@ -1,2 +1,3 @@
-# queue-system
-Build a modern, responsive web application that allows customers in a bank to monitor queue numbers in real time, receive alerts when their turn is near.
+📌 Queue Management System
+
+A real-time queue management system built to simulate how service counters (like in banks, clinics, or government offices) handle customer flow. The system allows admins to control queue progression while customers and display screens receive live updates instantly.

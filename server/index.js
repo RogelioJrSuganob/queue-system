@@ -32,8 +32,13 @@ io.on("connection", (socket) => {
 
   // Next number
   socket.on("nextNumber", (windowNumber) => {
-    currentNumber = currentNumber >= 100 ? 1 : currentNumber + 1;
-    currentWindow = windowNumber || currentWindow;
+    if (currentNumber === null) {
+      currentNumber = 1;
+    } else {
+      currentNumber = currentNumber >= 100 ? 1 : currentNumber + 1;
+    }
+
+    currentWindow = windowNumber || currentWindow || 1;
 
     io.emit("queueUpdate", {
       number: currentNumber,
@@ -43,8 +48,8 @@ io.on("connection", (socket) => {
 
   // RESET (FIXED)
   socket.on("resetQueue", () => {
-    currentNumber = 1;
-    currentWindow = 1;
+    currentNumber = null;
+    currentWindow = null;
     lastIssuedNumber = 1;
 
     io.emit("queueUpdate", {

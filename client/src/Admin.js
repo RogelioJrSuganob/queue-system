@@ -16,14 +16,19 @@ export default function Admin({ queue }) {
 
       <div className="card">
         <h2>Now Serving</h2>
-        <div className="big">{queue.number}</div>
-        <p className="window">Window {queue.window}</p>
+        <div className="big">
+          {queue.number ?? "--"}
+        </div>
+
+        <p className="window">
+          Window {queue.window ?? "--"}
+        </p>
       </div>
 
       <div className="admin-grid">
         {[1, 2, 3].map((w) => (
           <button key={w} className="btn primary" onClick={() => next(w)}>
-            Call Window {w}
+            Window {w}
           </button>
         ))}
       </div>

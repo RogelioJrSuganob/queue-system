@@ -26,8 +26,13 @@ export default function TVDisplay({ queue }) {
   return (
     <div className="tv">
       <h1>NOW SERVING</h1>
-      <div className="tv-number">{queue.number}</div>
-      <div className="tv-window">WINDOW {queue.window}</div>
+      <div className="tv-number">
+        {queue.number ?? "--"}
+      </div>
+
+      <div className="tv-window">
+        WINDOW {queue.window ?? "--"}
+      </div>
     </div>
   );
 }

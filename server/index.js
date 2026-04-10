@@ -25,9 +25,9 @@ io.on("connection", (socket) => {
     window: currentWindow,
   });
 
-  socket.on("nextNumber", () => {
+  socket.on("nextNumber", (windowNumber) => {
     currentNumber = currentNumber >= 100 ? 1 : currentNumber + 1;
-    currentWindow = currentWindow >= 3 ? 1 : currentWindow + 1;
+    currentWindow = windowNumber || currentWindow;
 
     io.emit("queueUpdate", {
       number: currentNumber,

@@ -20,7 +20,7 @@ export default function Admin({ queue }) {
         <p className="window">Window {queue.window}</p>
       </div>
 
-      <div className="grid admin-grid">
+      <div className="admin-grid">
         {[1, 2, 3].map((w) => (
           <button key={w} className="btn primary" onClick={() => next(w)}>
             Call Window {w}

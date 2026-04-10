@@ -1,3 +1,4 @@
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -14,63 +15,80 @@ body {
 .nav {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
   padding: 12px;
   background: #020617;
 }
 
 .nav button {
-  padding: 10px 16px;
+  padding: 10px 18px;
   border: none;
   background: #1e293b;
   color: white;
-  border-radius: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .nav button.active {
   background: #3b82f6;
 }
 
-/* LAYOUT */
+/* PAGE CENTERING */
 .page {
-  padding: 20px;
+  min-height: calc(100vh - 60px);
   display: flex;
   justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
 /* CARD */
 .card {
   width: 100%;
   max-width: 500px;
-  background: #1e293b;
-  padding: 25px;
-  border-radius: 16px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+
+  background: linear-gradient(145deg, #1e293b, #020617);
+  padding: 30px;
+  border-radius: 20px;
+
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 
 /* TEXT */
 .big {
-  font-size: clamp(60px, 10vw, 120px);
-  text-align: center;
+  font-size: clamp(60px, 12vw, 140px);
+  font-weight: bold;
   color: #22c55e;
 }
 
 .window {
-  text-align: center;
-  font-size: 24px;
+  font-size: clamp(20px, 4vw, 40px);
   color: #38bdf8;
 }
 
 .status {
-  text-align: center;
-  margin-top: 10px;
+  font-size: 16px;
+  color: #facc15;
 }
 
-/* BUTTON */
+/* BUTTONS */
 .btn {
-  padding: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
-  border-radius: 10px;
-  margin-top: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
 }
 
 .primary {
@@ -83,28 +101,52 @@ body {
   color: white;
 }
 
-/* GRID */
+/* GRID CENTERED */
 .admin-grid {
   display: grid;
-  gap: 10px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  width: 100%;
 }
 
-/* TV */
+/* TV MODE */
 .tv {
   height: 100vh;
+  width: 100%;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+
   text-align: center;
+  gap: 20px;
+
+  background: radial-gradient(circle, #020617, #000);
 }
 
 .tv-number {
   font-size: clamp(120px, 20vw, 260px);
+  font-weight: bold;
   color: #22c55e;
 }
 
 .tv-window {
-  font-size: 50px;
+  font-size: clamp(40px, 6vw, 80px);
   color: #38bdf8;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .card {
+    padding: 20px;
+  }
+
+  .big {
+    font-size: 60px;
+  }
+
+  .tv-number {
+    font-size: 120px;
+  }
 }

@@ -17,16 +17,24 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div className="app">
       <div className="nav">
-        <button onClick={() => setView("customer")}>Customer</button>
-        <button onClick={() => setView("admin")}>Admin</button>
-        <button onClick={() => setView("tv")}>TV</button>
+        {["customer", "admin", "tv"].map((v) => (
+          <button
+            key={v}
+            className={view === v ? "active" : ""}
+            onClick={() => setView(v)}
+          >
+            {v.toUpperCase()}
+          </button>
+        ))}
       </div>
 
-      {view === "admin" && <Admin queue={queue} />}
-      {view === "customer" && <Customer queue={queue} />}
-      {view === "tv" && <TVDisplay queue={queue} />}
+      <div className="page">
+        {view === "admin" && <Admin queue={queue} />}
+        {view === "customer" && <Customer queue={queue} />}
+        {view === "tv" && <TVDisplay queue={queue} />}
+      </div>
     </div>
   );
 }

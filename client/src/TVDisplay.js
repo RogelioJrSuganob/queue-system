@@ -4,17 +4,12 @@ export default function TVDisplay({ queue }) {
   const prevNumber = useRef(queue.number);
 
   useEffect(() => {
-    // Only play sound if number actually changed
     if (queue.number !== prevNumber.current) {
       playSound();
       speak(queue.number, queue.window);
       prevNumber.current = queue.number;
     }
   }, [queue]);
-
-  useEffect(() => {
-  console.log("Press F11 for fullscreen TV mode");
-  }, []);
 
   const playSound = () => {
     const audio = new Audio("/ding.mp3");
@@ -30,9 +25,9 @@ export default function TVDisplay({ queue }) {
 
   return (
     <div className="tv">
+      <h1>NOW SERVING</h1>
       <div className="tv-number">{queue.number}</div>
       <div className="tv-window">WINDOW {queue.window}</div>
     </div>
   );
-
 }

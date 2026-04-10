@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { socket } from "./socket";
 
-export default function Customer() {
+export default function TVDisplay() {
   const [data, setData] = useState({ number: 1, window: 1 });
 
   useEffect(() => {
@@ -10,10 +10,10 @@ export default function Customer() {
   }, []);
 
   return (
-    <div>
-      <h1>Now Serving</h1>
-      <h2>{data.number}</h2>
-      <h3>Window {data.window}</h3>
+    <div style={{ textAlign: "center", fontSize: "50px" }}>
+      <h1>NOW SERVING</h1>
+      <div>{data.number}</div>
+      <div>WINDOW {data.window}</div>
     </div>
   );
 }

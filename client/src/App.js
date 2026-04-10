@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Admin from "./Admin";
 import Customer from "./Customer";
 import TVDisplay from "./TVDisplay";
 import { socket } from "./socket";
 
 function App() {
-  const [view, setView] = useState("customer");
-  const [queue, setQueue] = useState({ number: 1, window: 1 });
+  const [queue, setQueue] = useState(null);
 
   useEffect(() => {
     socket.on("queueUpdate", (data) => {
@@ -17,26 +17,16 @@ function App() {
     return () => socket.off("queueUpdate");
   }, []);
 
-  return (
-    <div className="app">
-      <div className="nav">
-        {["customer", "admin", "tv"].map((v) => (
-          <button
-            key={v}
-            className={view === v ? "active" : ""}
-            onClick={() => setView(v)}
-          >
-            {v.toUpperCase()}
-          </button>
-        ))}
-      </div>
+  if (!queue) return null;
 
-      <div className="page">
-        {view === "admin" && <Admin queue={queue} />}
-        {view === "customer" && <Customer queue={queue} />}
-        {view === "tv" && <TVDisplay queue={queue} />}
-      </div>
-    </div>
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Customer queue={queue} />} />
+        <Route path="/admin" element={<Admin queue={queue} />} />
+        <Route path="/tv" element={<TVDisplay queue={queue} />} />
+      </Routes>
+    </Router>
   );
 }
 

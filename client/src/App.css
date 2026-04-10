@@ -45,11 +45,10 @@ body {
 
 /* PAGE CENTER */
 .page {
-  min-height: calc(100vh - 70px);
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
 }
 
 /* CARD */
@@ -193,4 +192,18 @@ body {
   .tv-number {
     font-size: 140px;
   }
+}
+
+.input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.admin-grid > div {
+  display: flex;
+  gap: 8px;
 }

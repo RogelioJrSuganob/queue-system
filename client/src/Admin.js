@@ -7,6 +7,7 @@ export default function Admin({ queue }) {
   const [show, setShow] = useState(false);
   const [windows, setWindows] = useState([]);
   const [inputWindow, setInputWindow] = useState("");
+  const [manualNumber, setManualNumber] = useState("");
 
   // 🔒 AUTH
   useEffect(() => {
@@ -29,12 +30,14 @@ export default function Admin({ queue }) {
   }, []);
 
   const handleLogin = () => {
-    if (password === "admin123") {
-      setAuthorized(true);
-      localStorage.setItem("adminAuth", "true");
-    } else {
-      alert("Wrong password");
-    }
+    socket.emit("adminLogin", password, (res) => {
+      if (res.success) {
+        setAuthorized(true);
+        localStorage.setItem("adminAuth", "true");
+      } else {
+        alert("Wrong password");
+      }
+    });
   };
 
   const logout = () => {
@@ -64,6 +67,14 @@ export default function Admin({ queue }) {
 
     socket.emit("removeWindow", num);
     setInputWindow("");
+  };
+
+  const setNumber = () => {
+    const num = Number(manualNumber);
+    if (!num) return alert("Enter valid number");
+
+    socket.emit("setNumber", num);
+    setManualNumber("");
   };
 
   if (!authorized) {
@@ -131,6 +142,19 @@ export default function Admin({ queue }) {
 
           <button className="btn secondary" onClick={removeWindow}>
             ➖ Remove
+          </button>
+        </div>
+
+        <div className="control-row">
+          <input
+            type="number"
+            placeholder="Set Number"
+            value={manualNumber}
+            onChange={(e) => setManualNumber(e.target.value)}
+          />
+
+          <button className="btn primary" onClick={setNumber}>
+            ✏️ Set
           </button>
         </div>
 

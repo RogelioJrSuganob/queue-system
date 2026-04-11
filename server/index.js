@@ -3,6 +3,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 
+const ADMIN_PASSWORD = "admin123";
 const app = express();
 app.use(cors());
 
@@ -31,6 +32,14 @@ io.on("connection", (socket) => {
   // 🔁 REQUEST WINDOWS (FIX FOR REFRESH)
   socket.on("requestWindows", () => {
     socket.emit("windowsUpdate", windows);
+  });
+
+  socket.on("adminLogin", (inputPassword, callback) => {
+    if (inputPassword === ADMIN_PASSWORD) {
+      callback({ success: true });
+    } else {
+      callback({ success: false });
+    }
   });
 
   // ➕ ADD WINDOW (CUSTOM NUMBER)
@@ -71,6 +80,15 @@ io.on("connection", (socket) => {
   socket.on("resetQueue", () => {
     currentNumber = null;
     currentWindow = null;
+
+    io.emit("queueUpdate", {
+      number: currentNumber,
+      window: currentWindow,
+    });
+  });
+
+  socket.on("setNumber", (num) => {
+    currentNumber = num;
 
     io.emit("queueUpdate", {
       number: currentNumber,

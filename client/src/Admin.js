@@ -5,7 +5,9 @@ export default function Admin({ queue }) {
   const [authorized, setAuthorized] = useState(false);
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+
   const [windows, setWindows] = useState([]);
+
   const [inputWindow, setInputWindow] = useState("");
   const [manualNumber, setManualNumber] = useState("");
 
@@ -15,7 +17,7 @@ export default function Admin({ queue }) {
     if (saved === "true") setAuthorized(true);
   }, []);
 
-  // 🔄 WINDOW SYNC (FIXED)
+  // 🔄 WINDOW SYNC
   useEffect(() => {
     const handleWindows = (data) => {
       setWindows(data);
@@ -23,7 +25,6 @@ export default function Admin({ queue }) {
 
     socket.on("windowsUpdate", handleWindows);
 
-    // 🔥 REQUEST WINDOWS AFTER CONNECT
     socket.emit("requestWindows");
 
     return () => socket.off("windowsUpdate", handleWindows);
@@ -55,7 +56,9 @@ export default function Admin({ queue }) {
 
   const addWindow = () => {
     const num = Number(inputWindow);
-    if (!num) return alert("Enter valid number");
+    if (!Number.isInteger(num) || num < 1) {
+      return alert("Enter valid window number");
+    }
 
     socket.emit("addWindow", num);
     setInputWindow("");
@@ -63,7 +66,9 @@ export default function Admin({ queue }) {
 
   const removeWindow = () => {
     const num = Number(inputWindow);
-    if (!num) return alert("Enter valid number");
+    if (!Number.isInteger(num) || num < 1) {
+      return alert("Enter valid window number");
+    }
 
     socket.emit("removeWindow", num);
     setInputWindow("");
@@ -71,12 +76,27 @@ export default function Admin({ queue }) {
 
   const setNumber = () => {
     const num = Number(manualNumber);
-    if (!num) return alert("Enter valid number");
+    const win = Number(inputWindow);
 
-    socket.emit("setNumber", num);
+    if (!Number.isInteger(num) || num < 1 || num > 100) {
+      return alert("Number must be 1–100");
+    }
+
+    if (!Number.isInteger(win) || win < 1) {
+      return alert("Enter valid window number");
+    }
+
+    if (!windows.includes(win)) {
+      return alert("Window does not exist");
+    }
+
+    socket.emit("setNumber", { number: num, window: win });
+
     setManualNumber("");
+    setInputWindow("");
   };
 
+  // 🔐 LOGIN UI
   if (!authorized) {
     return (
       <div className="page">
@@ -89,6 +109,9 @@ export default function Admin({ queue }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="input"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleLogin();
+            }}
           />
 
           <button
@@ -106,6 +129,7 @@ export default function Admin({ queue }) {
     );
   }
 
+  // ✅ ADMIN PANEL
   return (
     <div className="page">
       <div className="card">
@@ -127,13 +151,20 @@ export default function Admin({ queue }) {
           ))}
         </div>
 
-        {/* INPUT CONTROL */}
+        {/* ➕ ADD / ➖ REMOVE */}
         <div className="control-row">
           <input
             type="number"
             placeholder="Window #"
             value={inputWindow}
-            onChange={(e) => setInputWindow(e.target.value)}
+            onChange={(e) =>
+              setInputWindow(e.target.value.replace(/\D/g, ""))
+            }
+            onKeyDown={(e) => {
+              if (["e", "E", "+", "-", "."].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
           />
 
           <button className="btn primary" onClick={addWindow}>
@@ -145,12 +176,20 @@ export default function Admin({ queue }) {
           </button>
         </div>
 
+        {/* ✏️ SET NUMBER + WINDOW */}
         <div className="control-row">
           <input
             type="number"
-            placeholder="Set Number"
+            placeholder="Queue # (1–100)"
             value={manualNumber}
-            onChange={(e) => setManualNumber(e.target.value)}
+            onChange={(e) =>
+              setManualNumber(e.target.value.replace(/\D/g, ""))
+            }
+            onKeyDown={(e) => {
+              if (["e", "E", "+", "-", "."].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
           />
 
           <button className="btn primary" onClick={setNumber}>
